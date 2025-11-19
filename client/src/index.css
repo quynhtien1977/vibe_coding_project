@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream text-gray-800 font-sans overflow-hidden;
+  }
+}
+
+/* --- Gift Box Styles --- */
+.gift-container {
+  perspective: 1000px;
+}
+
+.gift-box {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.1s;
+}
+
+.gift-box:hover {
+  animation: shake 0.5s infinite;
+}
+
+.gift-box.open {
+  animation: none;
+  cursor: default;
+}
+
+.gift-box.open .lid {
+  animation: lid-fly-off 1s forwards;
+}
+
+.box-body {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(135deg, #D4AF37, #FFD700);
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.box-body::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 100%;
+  background: #8B0000;
+}
+
+.lid {
+  position: absolute;
+  top: 20px;
+  /* Overlap slightly */
+  width: 220px;
+  left: -10px;
+  height: 60px;
+  background: linear-gradient(135deg, #D4AF37, #FFD700);
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  transform-origin: top center;
+}
+
+.lid::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 100%;
+  background: #8B0000;
+}
+
+.bow {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 40px;
+  z-index: 25;
+}
+
+.bow::before,
+.bow::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 8px solid #8B0000;
+  top: 0;
+}
+
+.bow::before {
+  left: 0;
+  transform: rotate(-15deg);
+}
+
+.bow::after {
+  right: 0;
+  transform: rotate(15deg);
+}
+
+/* --- Letter Styles --- */
+.letter-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  width: 300px;
+  max-width: 90vw;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  z-index: 5;
+  /* Starts behind box body but we'll animate z-index or movement */
+  transition: all 1s ease-in-out;
+}
+
+.gift-box.open~.letter-container {
+  animation: letter-appear 1.5s 0.5s forwards;
+  z-index: 30;
+  /* Moves in front */
+}
+
+/* --- Animations --- */
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(2deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
+
+  75% {
+    transform: rotate(-2deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes lid-fly-off {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+
+  100% {
+    transform: translateY(-300px) rotate(20deg) translateX(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes letter-appear {
+  0% {
+    transform: translate(-50%, 0) scale(0.2);
+    opacity: 0;
+    top: 50%;
+  }
+
+  50% {
+    opacity: 1;
+    top: 40%;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    top: 50%;
+  }
+}
+
+.typewriter p {
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 auto;
+  animation: typing 3.5s steps(40, end);
+}
+
+@keyframes typing {
+  from {
+    width: 0
+  }
+
+  to {
+    width: 100%
+  }
+}
