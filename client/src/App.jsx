@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Sparkles, ChevronDown, Heart, Star, Music, Volume2, VolumeX } from 'lucide-react'
+import { Sparkles, ChevronDown, Heart, Star, Music, Volume2, VolumeX, Play } from 'lucide-react'
 
 // Reusable Section Component with Scroll Animation
 const ScrollSection = ({ children, className = "" }) => {
@@ -42,18 +42,22 @@ function App() {
     const [isOpen, setIsOpen] = useState(false)
     const [showText, setShowText] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [hasStarted, setHasStarted] = useState(false)
     const audioRef = useRef(null)
+
+    const handleStart = () => {
+        setHasStarted(true)
+        if (audioRef.current) {
+            audioRef.current.play().then(() => {
+                setIsPlaying(true)
+            }).catch(e => console.log("Audio play failed:", e))
+        }
+    }
 
     const handleOpen = () => {
         if (isOpen) return
         setIsOpen(true)
         setTimeout(() => setShowText(true), 1500)
-
-        // Auto-play music on open if not already playing
-        if (!isPlaying && audioRef.current) {
-            audioRef.current.play().catch(e => console.log("Audio play failed:", e))
-            setIsPlaying(true)
-        }
     }
 
     const toggleMusic = () => {
@@ -68,20 +72,44 @@ function App() {
     }
 
     return (
-        <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white overflow-x-hidden relative">
+        <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white relative">
+
+            {/* Welcome Overlay */}
+            {!hasStarted && (
+                <div
+                    className="fixed inset-0 z-[100] bg-gray-900 flex flex-col items-center justify-center cursor-pointer"
+                    onClick={handleStart}
+                >
+                    <div className="text-center space-y-6 animate-pulse">
+                        <h1 className="text-4xl md:text-6xl font-serif text-premium-gold tracking-widest">
+                            Chào Mừng
+                        </h1>
+                        <p className="text-white/60 text-lg uppercase tracking-widest">
+                            Chạm để bắt đầu
+                        </p>
+                        <div className="flex justify-center mt-8">
+                            <div className="w-16 h-16 rounded-full border-2 border-premium-gold flex items-center justify-center">
+                                <Play className="text-premium-gold ml-1" size={32} fill="currentColor" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Background Music */}
             <audio ref={audioRef} loop>
-                <source src="../public/audio/snaptik.vn_uiW1O.mp3" type="audio/mpeg" />
+                <source src="/audio/snaptik.vn_uiW1O.mp3" type="audio/mpeg" />
             </audio>
 
             {/* Music Toggle Button (Fixed) */}
-            <button
-                onClick={toggleMusic}
-                className="fixed top-6 right-6 z-50 bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition-all border border-white/20"
-            >
-                {isPlaying ? <Volume2 size={24} className="text-premium-gold" /> : <VolumeX size={24} className="text-gray-400" />}
-            </button>
+            {hasStarted && (
+                <button
+                    onClick={toggleMusic}
+                    className="fixed top-6 right-6 z-50 bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition-all border border-white/20"
+                >
+                    {isPlaying ? <Volume2 size={24} className="text-premium-gold" /> : <VolumeX size={24} className="text-gray-400" />}
+                </button>
+            )}
 
             {/* Background Particles (Fixed) */}
             <div className="fixed inset-0 pointer-events-none z-0">
