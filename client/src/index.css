@@ -3,10 +3,18 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --transition-theme: all 0.3s ease-in-out;
+  }
+
   body {
     @apply bg-cream text-gray-800 font-sans;
     overflow-x: hidden;
-    /* Prevent horizontal scroll from animations */
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+
+  * {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
   }
 }
 

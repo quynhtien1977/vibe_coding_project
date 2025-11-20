@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Sparkles, ChevronDown, Heart, Star, Music, Volume2, VolumeX, Play } from 'lucide-react'
+import { Sparkles, ChevronDown, Heart, Star, Music, Volume2, VolumeX, Play, Sun, Moon } from 'lucide-react'
 
 // Reusable Section Component with Scroll Animation
 const ScrollSection = ({ children, className = "" }) => {
@@ -43,7 +43,20 @@ function App() {
     const [showText, setShowText] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
     const [hasStarted, setHasStarted] = useState(false)
+    const [theme, setTheme] = useState(() => {
+        // Get theme from localStorage or default to 'dark'
+        return localStorage.getItem('theme') || 'dark'
+    })
     const audioRef = useRef(null)
+
+    // Save theme to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('theme', theme)
+    }, [theme])
+
+    const toggleTheme = () => {
+        setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark')
+    }
 
     const handleStart = () => {
         setHasStarted(true)
@@ -72,19 +85,19 @@ function App() {
     }
 
     return (
-        <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white relative">
+        <div className={`bg-gradient-to-b ${theme === 'dark' ? 'from-dark-bg-start to-dark-bg-end text-dark-text' : 'from-light-bg-start to-light-bg-end text-light-text'} relative min-h-screen`}>
 
             {/* Welcome Overlay */}
             {!hasStarted && (
                 <div
-                    className="fixed inset-0 z-[100] bg-gray-900 flex flex-col items-center justify-center cursor-pointer"
+                    className={`fixed inset-0 z-[100] ${theme === 'dark' ? 'bg-gray-900' : 'bg-light-bg-start'} flex flex-col items-center justify-center cursor-pointer`}
                     onClick={handleStart}
                 >
                     <div className="text-center space-y-6 animate-pulse">
                         <h1 className="text-4xl md:text-6xl font-serif text-premium-gold tracking-widest">
                             Chào Mừng
                         </h1>
-                        <p className="text-white/60 text-lg uppercase tracking-widest">
+                        <p className={`${theme === 'dark' ? 'text-white/60' : 'text-light-text-secondary'} text-lg uppercase tracking-widest`}>
                             Chạm để bắt đầu
                         </p>
                         <div className="flex justify-center mt-8">
@@ -103,12 +116,22 @@ function App() {
 
             {/* Music Toggle Button (Fixed) */}
             {hasStarted && (
-                <button
-                    onClick={toggleMusic}
-                    className="fixed top-6 right-6 z-50 bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition-all border border-white/20"
-                >
-                    {isPlaying ? <Volume2 size={24} className="text-premium-gold" /> : <VolumeX size={24} className="text-gray-400" />}
-                </button>
+                <>
+                    <button
+                        onClick={toggleMusic}
+                        className={`fixed top-6 right-6 z-50 ${theme === 'dark' ? 'bg-white/10 border-white/20' : 'bg-gray-900/10 border-gray-900/20'} backdrop-blur-md p-3 rounded-full hover:bg-opacity-30 transition-all border`}
+                    >
+                        {isPlaying ? <Volume2 size={24} className="text-premium-gold" /> : <VolumeX size={24} className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} />}
+                    </button>
+
+                    {/* Theme Toggle Button */}
+                    <button
+                        onClick={toggleTheme}
+                        className={`fixed top-6 right-20 z-50 ${theme === 'dark' ? 'bg-white/10 border-white/20' : 'bg-gray-900/10 border-gray-900/20'} backdrop-blur-md p-3 rounded-full hover:bg-opacity-30 transition-all border`}
+                    >
+                        {theme === 'dark' ? <Sun size={24} className="text-yellow-400" /> : <Moon size={24} className="text-gray-700" />}
+                    </button>
+                </>
             )}
 
             {/* Background Particles (Fixed) */}
@@ -116,7 +139,7 @@ function App() {
                 {[...Array(20)].map((_, i) => (
                     <div
                         key={i}
-                        className="absolute bg-white rounded-full opacity-20 animate-pulse"
+                        className={`absolute ${theme === 'dark' ? 'bg-white' : 'bg-premium-gold'} rounded-full ${theme === 'dark' ? 'opacity-20' : 'opacity-30'} animate-pulse`}
                         style={{
                             width: Math.random() * 4 + 'px',
                             height: Math.random() * 4 + 'px',
@@ -133,11 +156,11 @@ function App() {
                 <h1 className="text-5xl md:text-7xl font-serif text-premium-gold text-center mb-6 tracking-wider animate-fade-in">
                     Ngày Nhà Giáo Việt Nam
                 </h1>
-                <p className="text-cream text-center text-xl font-light tracking-widest uppercase mb-12 opacity-90">
+                <p className={`${theme === 'dark' ? 'text-cream' : 'text-light-text-secondary'} text-center text-xl font-light tracking-widest uppercase mb-12 opacity-90`}>
                     20 Tháng 11
                 </p>
                 <div className="animate-bounce mt-10">
-                    <ChevronDown size={40} className="text-white/50" />
+                    <ChevronDown size={40} className={theme === 'dark' ? 'text-white/50' : 'text-light-text-secondary/50'} />
                 </div>
             </ScrollSection>
 
@@ -150,25 +173,25 @@ function App() {
                     <h2 className="text-3xl md:text-5xl font-serif text-premium-gold mb-8">
                         Hành Trình Tri Thức
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-300 leading-relaxed italic">
+                    <p className={`text-lg md:text-xl ${theme === 'dark' ? 'text-gray-300' : 'text-light-text-secondary'} leading-relaxed italic`}>
                         "Mỗi bài giảng là một viên gạch xây dựng nên tương lai.<br />
                         Mỗi lời khuyên là ngọn đèn soi sáng con đường phía trước."
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                        <div className="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:border-premium-gold transition-colors">
+                        <div className={`${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/80 border-light-border shadow-md'} p-6 rounded-lg backdrop-blur-sm border hover:border-premium-gold transition-colors`}>
                             <Star className="w-8 h-8 text-yellow-400 mx-auto mb-4" />
                             <h3 className="text-xl font-bold mb-2 text-premium-gold">Tận Tâm</h3>
-                            <p className="text-sm text-gray-400">Luôn hết lòng vì học sinh thân yêu.</p>
+                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-light-text-secondary'}`}>Luôn hết lòng vì học sinh thân yêu.</p>
                         </div>
-                        <div className="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:border-premium-gold transition-colors">
+                        <div className={`${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/80 border-light-border shadow-md'} p-6 rounded-lg backdrop-blur-sm border hover:border-premium-gold transition-colors`}>
                             <Music className="w-8 h-8 text-blue-400 mx-auto mb-4" />
                             <h3 className="text-xl font-bold mb-2 text-premium-gold">Cảm Hứng</h3>
-                            <p className="text-sm text-gray-400">Truyền lửa đam mê và sáng tạo.</p>
+                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-light-text-secondary'}`}>Truyền lửa đam mê và sáng tạo.</p>
                         </div>
-                        <div className="bg-white/5 p-6 rounded-lg backdrop-blur-sm border border-white/10 hover:border-premium-gold transition-colors">
+                        <div className={`${theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/80 border-light-border shadow-md'} p-6 rounded-lg backdrop-blur-sm border hover:border-premium-gold transition-colors`}>
                             <Heart className="w-8 h-8 text-pink-400 mx-auto mb-4" />
                             <h3 className="text-xl font-bold mb-2 text-premium-gold">Yêu Thương</h3>
-                            <p className="text-sm text-gray-400">Như người cha, người mẹ thứ hai.</p>
+                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-light-text-secondary'}`}>Như người cha, người mẹ thứ hai.</p>
                         </div>
                     </div>
                 </div>
@@ -177,10 +200,10 @@ function App() {
             {/* Section 3: The Gift */}
             <ScrollSection className="relative z-10">
                 <div className="text-center mb-10">
-                    <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">
+                    <h2 className={`text-3xl md:text-4xl font-serif ${theme === 'dark' ? 'text-white' : 'text-light-text'} mb-4`}>
                         Một Món Quà Nhỏ
                     </h2>
-                    <p className="text-gray-400">
+                    <p className={theme === 'dark' ? 'text-gray-400' : 'text-light-text-secondary'}>
                         Gửi gắm tấm lòng tri ân
                     </p>
                 </div>
@@ -250,7 +273,7 @@ function App() {
                         setShowText(false);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white border border-premium-gold hover:bg-gray-800 transition-all px-6 py-3 rounded-full flex items-center gap-2 text-sm z-50 shadow-lg"
+                    className={`fixed bottom-10 left-1/2 -translate-x-1/2 ${theme === 'dark' ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-white text-light-text hover:bg-gray-100'} border border-premium-gold transition-all px-6 py-3 rounded-full flex items-center gap-2 text-sm z-50 shadow-lg`}
                 >
                     Đóng & Bọc lại
                 </button>
